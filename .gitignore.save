@@ -1,0 +1,22 @@
+# macOS system files
+.DS_Store
+.Trash/
+.localized
+
+# IntelliJ and VS Code settings
+.idea/
+.vscode/
+
+# Compiled Java classes and output folders
+*.class
+out/
+
+# Git system files
+.gitignore
+
+# Logs and temporary files
+*.log
+
+# Miscellaneous
+*.iml
+
