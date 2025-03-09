@@ -46,14 +46,24 @@ public class BattleShipCLI {
     }
 
     private void displayBoard() {
-        System.out.println("\n Battleship Board ");
+        System.out.println("\n Battleship Board");
+
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 10; j++) {
-                System.out.print(" ~ "); // Placeholder for now
+                if (game.getBoard()[i][j].isGuessed()) {
+                    if (game.getBoard()[i][j].hasShip()) {
+                        System.out.print(" H ");
+                    } else {
+                        System.out.print(" M ");
+                    }
+                } else {
+                    System.out.print(" ~ ");
+                }
             }
             System.out.println();
         }
     }
+
 
     public static void main(String[] args) {
         BattleShipCLI game = new BattleShipCLI();
