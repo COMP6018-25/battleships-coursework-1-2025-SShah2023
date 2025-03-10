@@ -19,6 +19,11 @@ public class BattleShipCLI {
             int row = getValidInput("Enter row (0-9): ");
             int col = getValidInput("Enter column (0-9): ");
 
+            if (game.getBoard()[row][col].isGuessed()) {
+                System.out.println("You've already guessed this spot! Try again.");
+                continue;
+            }
+
             boolean hit = game.makeGuess(row, col);
             System.out.println(hit ? "Hit!" : "Miss!");
 
@@ -26,6 +31,7 @@ public class BattleShipCLI {
                 System.out.println("Game Over! You sunk all the ships!");
                 break;
             }
+
         }
 
         scanner.close();
@@ -33,36 +39,45 @@ public class BattleShipCLI {
 
     private int getValidInput(String prompt) {
         int input = -1;
-        while (input < 0 || input >= 10) {
+        while (true) {
             System.out.print(prompt);
             if (scanner.hasNextInt()) {
                 input = scanner.nextInt();
+                if (input >= 0 && input < 10) {
+                    break;
+                } else {
+                    System.out.println("Out of bounds! Enter a number between 0-9.");
+                }
             } else {
-                System.out.println("Invalid input! Enter a number between 0-9.");
+                System.out.println("Invalid input! Please enter a number between 0-9.");
                 scanner.next();
             }
         }
         return input;
     }
 
+
     private void displayBoard() {
-        System.out.println("\n Battleship Board");
+        System.out.println("Battleship Board ");
+        System.out.println("   0 1 2 3 4 5 6 7 8 9");
 
         for (int i = 0; i < 10; i++) {
+            System.out.print(i + "  ");
             for (int j = 0; j < 10; j++) {
                 if (game.getBoard()[i][j].isGuessed()) {
                     if (game.getBoard()[i][j].hasShip()) {
-                        System.out.print(" H ");
+                        System.out.print("H ");
                     } else {
-                        System.out.print(" M ");
+                        System.out.print("M ");
                     }
                 } else {
-                    System.out.print(" ~ ");
+                    System.out.print("~ ");
                 }
             }
             System.out.println();
         }
     }
+
 
 
     public static void main(String[] args) {
