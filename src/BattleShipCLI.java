@@ -16,8 +16,10 @@ public class BattleShipCLI {
 
         while (!game.isGameOver()) {
             displayBoard();
-            int row = getValidInput("Enter row (0-9): ");
-            int col = getValidInput("Enter column (0-9): ");
+            int[] coordinates = getValidInput();
+            int row = coordinates[0];
+            int col = coordinates[1];
+
 
             if (game.getBoard()[row][col].isGuessed()) {
                 System.out.println("You've already guessed this spot! Try again.");
@@ -37,39 +39,52 @@ public class BattleShipCLI {
         scanner.close();
     }
 
-    private int getValidInput(String prompt) {
-        int input = -1;
-        while (true) {
-            System.out.print(prompt);
-            if (scanner.hasNextInt()) {
-                input = scanner.nextInt();
-                if (input >= 0 && input < 10) {
-                    break;
-                } else {
-                    System.out.println("Out of bounds! Enter a number between 0-9.");
-                }
-            } else {
-                System.out.println("Invalid input! Please enter a number between 0-9.");
-                scanner.next();
-            }
-        }
-        return input;
-    }
+    private int[] getValidInput() {
+        String input;
+        int row = -1, col = -1;
 
+        while (true) {
+            System.out.print("Enter coordinate (A1 - J10): ");
+            input = scanner.next().toUpperCase();
+
+            if (input.length() < 2 || input.length() > 3) {
+                System.out.println("Invalid format! Use A1 - J10.");
+                continue;
+            }
+
+            char rowChar = input.charAt(0);
+            if (rowChar < 'A' || rowChar > 'J') {
+                System.out.println("Invalid row! Use A-J.");
+                continue;
+            }
+            row = rowChar - 'A';
+
+            try {
+                col = Integer.parseInt(input.substring(1)) - 1;
+                if (col < 0 || col > 9) {
+                    System.out.println("Invalid column! Use 1-10.");
+                    continue;
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid column! Use 1-10.");
+                continue;
+            }
+
+            break;
+        }
+
+        return new int[]{row, col};
+    }
 
     private void displayBoard() {
         System.out.println("Battleship Board ");
-        System.out.println("   0 1 2 3 4 5 6 7 8 9");
+        System.out.println("   1 2 3 4 5 6 7 8 9 10");
 
         for (int i = 0; i < 10; i++) {
-            System.out.print(i + "  ");
+            System.out.print((char) ('A' + i) + "  ");
             for (int j = 0; j < 10; j++) {
                 if (game.getBoard()[i][j].isGuessed()) {
-                    if (game.getBoard()[i][j].hasShip()) {
-                        System.out.print("H ");
-                    } else {
-                        System.out.print("M ");
-                    }
+                    System.out.print(game.getBoard()[i][j].hasShip() ? "H " : "M ");
                 } else {
                     System.out.print("~ ");
                 }
@@ -77,8 +92,6 @@ public class BattleShipCLI {
             System.out.println();
         }
     }
-
-
 
     public static void main(String[] args) {
         BattleShipCLI game = new BattleShipCLI();
