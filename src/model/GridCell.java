@@ -24,7 +24,7 @@ public class GridCell {
     }
 
     public Ship getShip() {
-        return ship != null ? ship : new Ship(0); // Return a placeholder ship instead of null
+        return ship != null ? ship : new Ship(0);
     }
 
     @Override

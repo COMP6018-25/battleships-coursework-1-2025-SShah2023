@@ -1,16 +1,17 @@
 package model;
+
+import java.util.Observable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
-public class GameModel {
+public class GameModel extends Observable {
     private static final int BOARD_SIZE = 10;
     private final GridCell[][] board = new GridCell[BOARD_SIZE][BOARD_SIZE];
     private final List<Ship> ships = new ArrayList<>();
     private int totalGuesses = 0;
 
     public GameModel() {
-        // Initialize board with empty GridCells
+        // Initialize the board with empty GridCells
         for (int i = 0; i < BOARD_SIZE; i++) {
             for (int j = 0; j < BOARD_SIZE; j++) {
                 board[i][j] = new GridCell();
@@ -20,7 +21,6 @@ public class GameModel {
         placeShipsRandomly();
     }
 
-    // Create ships and add to list
     private void initializeShips() {
         ships.add(new Ship(5));
         ships.add(new Ship(4));
@@ -29,27 +29,24 @@ public class GameModel {
         ships.add(new Ship(2));
     }
 
-    // Randomly place ships on the board
     private void placeShipsRandomly() {
-        Random random = new Random();
         for (Ship ship : ships) {
             boolean placed = false;
             while (!placed) {
-                int row = random.nextInt(BOARD_SIZE);
-                int col = random.nextInt(BOARD_SIZE);
-                boolean horizontal = random.nextBoolean();
+                int row = (int) (Math.random() * BOARD_SIZE);
+                int col = (int) (Math.random() * BOARD_SIZE);
+                boolean horizontal = Math.random() < 0.5;
                 placed = placeShip(ship, row, col, horizontal);
             }
         }
     }
 
-    // Place a ship at a specific location
     public boolean placeShip(Ship ship, int row, int col, boolean horizontal) {
-        if (ship == null || row < 0 || col < 0 || row >= BOARD_SIZE || col >= BOARD_SIZE) {
-            return false; // Validate inputs
+        if (row < 0 || col < 0 || row >= BOARD_SIZE || col >= BOARD_SIZE) {
+            return false;
         }
 
-        // Check if placement is valid (no overlaps)
+        // Ensure ship placement does not overlap
         for (int i = 0; i < ship.getLength(); i++) {
             int x = row + (horizontal ? 0 : i);
             int y = col + (horizontal ? i : 0);
@@ -58,7 +55,7 @@ public class GameModel {
             }
         }
 
-        // Place ship
+        // Place ship on the board
         for (int i = 0; i < ship.getLength(); i++) {
             int x = row + (horizontal ? 0 : i);
             int y = col + (horizontal ? i : 0);
@@ -67,44 +64,32 @@ public class GameModel {
         return true;
     }
 
-    // Handle a player's guess
     public boolean makeGuess(int row, int col) {
-        if (row < 0 || col < 0 || row >= BOARD_SIZE || col >= BOARD_SIZE) {
-            System.out.println("Invalid move: Out of bounds.");
-            return false;
-        }
         if (!board[row][col].isGuessed()) {
             boolean hit = board[row][col].attemptHit();
             totalGuesses++;
-            System.out.println(hit ? "Hit!" : "Miss!");
 
-            // Check if game is over
-            if (isGameOver()) {
-                System.out.println("Game Over! All ships have been sunk in " + totalGuesses + " guesses.");
-            }
+            // Notify GUI that board has changed
+            setChanged();
+            notifyObservers();
 
             return hit;
         }
-        System.out.println("Already guessed!");
         return false;
     }
 
-    // Check if all ships are sunk
     public boolean isGameOver() {
-        for (Ship ship : ships) {
-            if (!ship.isSunk()) {
-                return false; // Game is not over if any ship is still floating
-            }
-        }
-        return true;
+        return ships.stream().allMatch(Ship::isSunk);
     }
 
-    // Get the board (for debugging or GUI purposes)
+    public boolean isShipSunk(Ship ship) {
+        return ship.isSunk();
+    }
+
     public GridCell[][] getBoard() {
         return board;
     }
 
-    // Get total number of guesses made
     public int getTotalGuesses() {
         return totalGuesses;
     }

@@ -1,17 +1,14 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import model.GameModel;
-import model.GridCell;
+import java.util.Observer;
+import java.util.Observable;
 
-public class GameView extends JFrame {
+public class GameView extends JFrame implements Observer {
     private JButton[][] buttons;
-    private GameModel game;
     private JLabel statusLabel;
+    private GameController controller;
 
     public GameView() {
-        game = new GameModel();
         buttons = new JButton[10][10];
 
         setTitle("Battleship Game");
@@ -24,7 +21,8 @@ public class GameView extends JFrame {
             for (int j = 0; j < 10; j++) {
                 buttons[i][j] = new JButton("~");
                 buttons[i][j].setFont(new Font("Arial", Font.BOLD, 16));
-                buttons[i][j].addActionListener(new ButtonClickListener(i, j));
+                final int row = i, col = j;
+                buttons[i][j].addActionListener(e -> controller.handleGuess(row, col));
                 boardPanel.add(buttons[i][j]);
             }
         }
@@ -34,13 +32,27 @@ public class GameView extends JFrame {
         add(boardPanel, BorderLayout.CENTER);
 
         JButton resetButton = new JButton("Reset Game");
-        resetButton.addActionListener(e -> resetGame());
+        resetButton.addActionListener(e -> controller.resetGame());
         add(resetButton, BorderLayout.SOUTH);
     }
 
-    private void resetGame() {
-        game = new GameModel();
-        statusLabel.setText("Game Reset! Select a cell to attack.");
+    public void setController(GameController controller) {
+        this.controller = controller;
+    }
+
+    public void updateBoard(int row, int col, boolean hit) {
+        buttons[row][col].setText(hit ? "H" : "M");
+        buttons[row][col].setEnabled(false);
+    }
+
+    public void displayMessage(String message) {
+        statusLabel.setText(message);
+    }
+
+    public void displayGameOver() {
+        statusLabel.setText("Game Over! You won!");
+    }
+    public void resetBoard() {
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 10; j++) {
                 buttons[i][j].setText("~");
@@ -48,45 +60,13 @@ public class GameView extends JFrame {
             }
         }
     }
-
-    private class ButtonClickListener implements ActionListener {
-        private int row, col;
-
-        public ButtonClickListener(int row, int col) {
-            this.row = row;
-            this.col = col;
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            if (!game.getBoard()[row][col].isGuessed()) {
-                boolean hit = game.makeGuess(row, col);
-                buttons[row][col].setText(hit ? "H" : "M");
-                buttons[row][col].setEnabled(false);
-                statusLabel.setText(hit ? "Hit!" : "Miss!");
-
-                if (game.isGameOver()) {
-                    statusLabel.setText("Game Over! You won!");
-                    disableBoard();
-                }
-            } else {
-                statusLabel.setText("You've already guessed this spot!");
-            }
-        }
+    public void disableCell(int row, int col) {
+        buttons[row][col].setEnabled(false);
     }
 
-    private void disableBoard() {
-        for (int i = 0; i < 10; i++) {
-            for (int j = 0; j < 10; j++) {
-                buttons[i][j].setEnabled(false);
-            }
-        }
-    }
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            GameView gameView = new GameView();
-            gameView.setVisible(true);
-        });
+    @Override
+    public void update(Observable o, Object arg) {
+        repaint();
     }
 }
