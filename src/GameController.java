@@ -16,7 +16,10 @@ public class GameController {
 
             // Check if the specific ship is sunk
             if (gameModel.getBoard()[row][col].hasShip() && gameModel.isShipSunk(gameModel.getBoard()[row][col].getShip())) {
-                gameView.displayMessage("You sunk a ship!");
+                String shipName = gameModel.getBoard()[row][col].getShip().getName();
+                gameView.showSunkShip(shipName);
+
+
             }
 
             // Check if all ships are sunk and the game is over
@@ -28,6 +31,10 @@ public class GameController {
             gameView.displayMessage("You've already guessed this spot!");
         }
     }
+    public GameModel getGameModel() {
+        return gameModel;
+    }
+
 
     private void disableBoard() {
         for (int i = 0; i < 10; i++) {
@@ -42,4 +49,5 @@ public class GameController {
         gameView.displayMessage("Game Reset! Select a cell to attack.");
         gameView.resetBoard(); // Reset the UI board
     }
+
 }
