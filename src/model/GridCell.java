@@ -9,11 +9,9 @@ public class GridCell {
     }
 
     public boolean attemptHit() {
-        if (!isGuessed) {
-            isGuessed = true;
-            return ship != null && ship.hit();
-        }
-        return false;
+        assert !isGuessed : "This cell has already been guessed!";
+        isGuessed = true;
+        return ship != null && ship.hit();
     }
 
     public boolean hasShip() {

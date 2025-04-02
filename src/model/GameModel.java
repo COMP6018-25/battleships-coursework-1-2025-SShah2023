@@ -1,5 +1,4 @@
 package model;
-
 import java.util.Observable;
 import java.util.ArrayList;
 import java.util.List;
@@ -8,6 +7,8 @@ public class GameModel extends Observable {
     private static final int BOARD_SIZE = 10;
     private final GridCell[][] board = new GridCell[BOARD_SIZE][BOARD_SIZE];
     private final List<Ship> ships = new ArrayList<>();
+    private final List<Ship> sunkShips = new ArrayList<>();
+
     private int totalGuesses = 0;
 
     public GameModel() {
@@ -22,11 +23,11 @@ public class GameModel extends Observable {
     }
 
     private void initializeShips() {
-        ships.add(new Ship(5));
-        ships.add(new Ship(4));
-        ships.add(new Ship(3));
-        ships.add(new Ship(2));
-        ships.add(new Ship(2));
+        ships.add(new Ship(5, "5"));
+        ships.add(new Ship(4, "4"));
+        ships.add(new Ship(3, "3"));
+        ships.add(new Ship(2, "2"));
+        ships.add(new Ship(2, "2"));
     }
 
     private void placeShipsRandomly() {
@@ -42,6 +43,7 @@ public class GameModel extends Observable {
     }
 
     public boolean placeShip(Ship ship, int row, int col, boolean horizontal) {
+        assert ship != null : "Ship cannot be null";
         if (row < 0 || col < 0 || row >= BOARD_SIZE || col >= BOARD_SIZE) {
             return false;
         }
@@ -65,13 +67,26 @@ public class GameModel extends Observable {
     }
 
     public boolean makeGuess(int row, int col) {
+        assert row >= 0 && row < BOARD_SIZE : "Row out of bounds";
+        assert col >= 0 && col < BOARD_SIZE : "Column out of bounds";
         if (!board[row][col].isGuessed()) {
             boolean hit = board[row][col].attemptHit();
             totalGuesses++;
 
-            // Notify GUI that board has changed
-            setChanged();
-            notifyObservers();
+            if (hit) {
+                Ship ship = board[row][col].getShip();
+                if (ship.isSunk() && !sunkShips.contains(ship)) {
+                    sunkShips.add(ship);
+                    setChanged();
+                    notifyObservers("You sunk the " + ship.getName() + "!");
+                } else {
+                    setChanged();
+                    notifyObservers();
+                }
+            } else {
+                setChanged();
+                notifyObservers();
+            }
 
             return hit;
         }

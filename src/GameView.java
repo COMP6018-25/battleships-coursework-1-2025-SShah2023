@@ -54,6 +54,7 @@ public class GameView extends JFrame implements Observer {
     }
 
     public void updateBoard(int row, int col, boolean hit) {
+        assert row >= 0 && row < 10 && col >= 0 && col < 10 : "updateBoard: out of bounds";
         buttons[row][col].setText(hit ? "H" : "M");
         buttons[row][col].setEnabled(false);
     }

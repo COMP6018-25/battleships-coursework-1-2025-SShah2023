@@ -23,5 +23,9 @@ public class Main {
         System.out.println("Making a guess at (5,5)...");
         hit = game.makeGuess(5, 5);
         System.out.println(hit ? "Hit!" : "Miss!");
+
+        assert ship.getLength() == 3 : "Ship length should be 3";
+        assert game.getBoard() != null : "Board should not be null";
+
     }
 }

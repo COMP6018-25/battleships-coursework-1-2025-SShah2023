@@ -10,6 +10,7 @@ public class GameController {
     }
 
     public void handleGuess(int row, int col) {
+        assert row >= 0 && row < 10 && col >= 0 && col < 10 : "Guess out bounds";
         if (!gameModel.getBoard()[row][col].isGuessed()) {
             boolean hit = gameModel.makeGuess(row, col);
             gameView.updateBoard(row, col, hit);
@@ -46,6 +47,7 @@ public class GameController {
 
     public void resetGame() {
         gameModel = new GameModel();
+        assert gameModel.getBoard() != null : "Game board should be initialized after reset";
         gameView.displayMessage("Game Reset! Select a cell to attack.");
         gameView.resetBoard(); // Reset the UI board
     }
