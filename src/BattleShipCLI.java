@@ -12,14 +12,16 @@ public class BattleShipCLI {
 
     public void startGame() {
         System.out.println("Welcome to Battleship!");
-        System.out.println("Enter your guesses in the format: row col (e.g., 2 3)");
+        System.out.println("Enter your guesses in the format: row col (e.g., A3)");
+
+        // 🔽 Ask user if they want to load ships from file
+        loadShipsFromFile();
 
         while (!game.isGameOver()) {
             displayBoard();
             int[] coordinates = getValidInput();
             int row = coordinates[0];
             int col = coordinates[1];
-
 
             if (game.getBoard()[row][col].isGuessed()) {
                 System.out.println("You've already guessed this spot! Try again.");
@@ -33,10 +35,25 @@ public class BattleShipCLI {
                 System.out.println("Game Over! You sunk all the ships!");
                 break;
             }
-
         }
 
         scanner.close();
+    }
+
+    private void loadShipsFromFile() {
+        System.out.print("Enter ship config file path (or press Enter to skip): ");
+        String path = scanner.nextLine().trim();
+
+        if (path.isEmpty()) {
+            return; // skip loading
+        }
+
+        boolean success = game.loadShipsFromFile(path);
+        if (success) {
+            System.out.println("Ships loaded successfully from file.");
+        } else {
+            System.out.println("Failed to load file. Check format or file path.");
+        }
     }
 
     private int[] getValidInput() {
