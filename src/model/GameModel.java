@@ -2,6 +2,10 @@ package model;
 import java.util.Observable;
 import java.util.ArrayList;
 import java.util.List;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+
 
 public class GameModel extends Observable {
     private static final int BOARD_SIZE = 10;
@@ -65,6 +69,49 @@ public class GameModel extends Observable {
         }
         return true;
     }
+    public boolean loadShipsFromFile(String filePath) {
+        // Clear board and ships
+        for (int i = 0; i < BOARD_SIZE; i++) {
+            for (int j = 0; j < BOARD_SIZE; j++) {
+                board[i][j] = new GridCell();
+            }
+        }
+        ships.clear();
+        sunkShips.clear();
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                line = line.trim();
+                if (line.isEmpty() || line.startsWith("#")) continue;
+
+                String[] parts = line.split("\\s+");
+                if (parts.length != 5) {
+                    System.err.println("Invalid format: " + line);
+                    return false;
+                }
+
+                String name = parts[0];
+                int length = Integer.parseInt(parts[1]);
+                int row = Integer.parseInt(parts[2]);
+                int col = Integer.parseInt(parts[3]);
+                boolean horizontal = parts[4].equalsIgnoreCase("H");
+
+                Ship ship = new Ship(length, name);
+                boolean placed = placeShip(ship, row, col, horizontal);
+                if (!placed) {
+                    System.err.println("Failed to place ship: " + name + " at " + row + "," + col);
+                    return false;
+                }
+                ships.add(ship);
+            }
+            return true;
+        } catch (IOException | NumberFormatException e) {
+            System.err.println("Error loading file: " + e.getMessage());
+            return false;
+        }
+    }
+
 
     public boolean makeGuess(int row, int col) {
         assert row >= 0 && row < BOARD_SIZE : "Row out of bounds";
