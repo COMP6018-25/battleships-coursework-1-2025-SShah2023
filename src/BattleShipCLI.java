@@ -6,16 +6,24 @@ public class BattleShipCLI {
     private Scanner scanner;
 
     public BattleShipCLI() {
-        game = new GameModel();
         scanner = new Scanner(System.in);
     }
 
     public void startGame() {
         System.out.println("Welcome to Battleship!");
-        System.out.println("Enter your guesses in the format: row col (e.g., A3)");
+        System.out.println("Would you like to load ship configuration from a file? (Y/N): ");
+        String choice = scanner.nextLine().trim().toUpperCase();
 
-        // 🔽 Ask user if they want to load ships from file
-        loadShipsFromFile();
+        if (choice.equals("Y")) {
+            if (!loadShipsFromFile()) {
+                System.out.println("Failed to load ships. Starting a random game instead.");
+                game = new GameModel();
+            }
+        } else {
+            game = new GameModel();
+        }
+
+        System.out.println("Enter your guesses in the format: A1,B2...");
 
         while (!game.isGameOver()) {
             displayBoard();
@@ -30,30 +38,16 @@ public class BattleShipCLI {
 
             boolean hit = game.makeGuess(row, col);
             System.out.println(hit ? "Hit!" : "Miss!");
-
-            if (game.isGameOver()) {
-                System.out.println("Game Over! You sunk all the ships!");
-                break;
-            }
         }
 
+        System.out.println("Game Over! You sunk all the ships in " + game.getTotalGuesses() + " guesses!");
         scanner.close();
     }
 
-    private void loadShipsFromFile() {
-        System.out.print("Enter ship config file path (or press Enter to skip): ");
-        String path = scanner.nextLine().trim();
-
-        if (path.isEmpty()) {
-            return; // skip loading
-        }
-
-        boolean success = game.loadShipsFromFile(path);
-        if (success) {
-            System.out.println("Ships loaded successfully from file.");
-        } else {
-            System.out.println("Failed to load file. Check format or file path.");
-        }
+    private boolean loadShipsFromFile() {
+        String path = "ships.txt";
+        game = new GameModel();
+        return game.loadShipsFromFile(path);
     }
 
     private int[] getValidInput() {
@@ -94,7 +88,7 @@ public class BattleShipCLI {
     }
 
     private void displayBoard() {
-        System.out.println("Battleship Board ");
+        System.out.println("Battleship Board");
         System.out.println("   1 2 3 4 5 6 7 8 9 10");
 
         for (int i = 0; i < 10; i++) {
