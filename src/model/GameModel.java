@@ -6,7 +6,6 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 
-
 public class GameModel extends Observable {
     private static final int BOARD_SIZE = 10;
     private final GridCell[][] board = new GridCell[BOARD_SIZE][BOARD_SIZE];
@@ -16,7 +15,6 @@ public class GameModel extends Observable {
     private int totalGuesses = 0;
 
     public GameModel() {
-        // Initialize the board with empty GridCells
         for (int i = 0; i < BOARD_SIZE; i++) {
             for (int j = 0; j < BOARD_SIZE; j++) {
                 board[i][j] = new GridCell();
@@ -27,6 +25,7 @@ public class GameModel extends Observable {
     }
 
     private void initializeShips() {
+        ships.clear();
         ships.add(new Ship(5, "5"));
         ships.add(new Ship(4, "4"));
         ships.add(new Ship(3, "3"));
@@ -37,22 +36,20 @@ public class GameModel extends Observable {
     private void placeShipsRandomly() {
         for (Ship ship : ships) {
             boolean placed = false;
-            while (!placed) {
+            int attempts = 0;
+            while (!placed && attempts < 100) {
                 int row = (int) (Math.random() * BOARD_SIZE);
                 int col = (int) (Math.random() * BOARD_SIZE);
                 boolean horizontal = Math.random() < 0.5;
                 placed = placeShip(ship, row, col, horizontal);
+                attempts++;
             }
         }
     }
 
     public boolean placeShip(Ship ship, int row, int col, boolean horizontal) {
-        assert ship != null : "Ship cannot be null";
-        if (row < 0 || col < 0 || row >= BOARD_SIZE || col >= BOARD_SIZE) {
-            return false;
-        }
+        if (row < 0 || col < 0 || row >= BOARD_SIZE || col >= BOARD_SIZE) return false;
 
-        // Ensure ship placement does not overlap
         for (int i = 0; i < ship.getLength(); i++) {
             int x = row + (horizontal ? 0 : i);
             int y = col + (horizontal ? i : 0);
@@ -61,7 +58,6 @@ public class GameModel extends Observable {
             }
         }
 
-        // Place ship on the board
         for (int i = 0; i < ship.getLength(); i++) {
             int x = row + (horizontal ? 0 : i);
             int y = col + (horizontal ? i : 0);
@@ -69,8 +65,8 @@ public class GameModel extends Observable {
         }
         return true;
     }
+
     public boolean loadShipsFromFile(String filePath) {
-        // Clear board and ships
         for (int i = 0; i < BOARD_SIZE; i++) {
             for (int j = 0; j < BOARD_SIZE; j++) {
                 board[i][j] = new GridCell();
@@ -112,10 +108,7 @@ public class GameModel extends Observable {
         }
     }
 
-
     public boolean makeGuess(int row, int col) {
-        assert row >= 0 && row < BOARD_SIZE : "Row out of bounds";
-        assert col >= 0 && col < BOARD_SIZE : "Column out of bounds";
         if (!board[row][col].isGuessed()) {
             boolean hit = board[row][col].attemptHit();
             totalGuesses++;
@@ -125,7 +118,7 @@ public class GameModel extends Observable {
                 if (ship.isSunk() && !sunkShips.contains(ship)) {
                     sunkShips.add(ship);
                     setChanged();
-                    notifyObservers("You sunk the " + ship.getName() + "!");
+                    notifyObservers("You sunk ship " + ship.getName() + "!");
                 } else {
                     setChanged();
                     notifyObservers();

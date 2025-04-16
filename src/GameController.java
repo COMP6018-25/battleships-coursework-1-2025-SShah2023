@@ -1,4 +1,6 @@
 import model.GameModel;
+import javax.swing.JFileChooser;
+import java.io.File;
 
 public class GameController {
     private GameModel gameModel;
@@ -19,23 +21,21 @@ public class GameController {
             if (gameModel.getBoard()[row][col].hasShip() && gameModel.isShipSunk(gameModel.getBoard()[row][col].getShip())) {
                 String shipName = gameModel.getBoard()[row][col].getShip().getName();
                 gameView.showSunkShip(shipName);
-
-
             }
-
             // Check if all ships are sunk and the game is over
+            // Show total number of guesses
             if (gameModel.isGameOver()) {
-                gameView.displayGameOver();
+                gameView.displayGameOver(gameModel.getTotalGuesses());
                 disableBoard();
             }
         } else {
             gameView.displayMessage("You've already guessed this spot!");
         }
     }
+
     public GameModel getGameModel() {
         return gameModel;
     }
-
 
     private void disableBoard() {
         for (int i = 0; i < 10; i++) {
@@ -52,4 +52,16 @@ public class GameController {
         gameView.resetBoard(); // Reset the UI board
     }
 
+    public void loadShipsFromFile() {
+        boolean loaded = gameModel.loadShipsFromFile("ships.txt");
+        if (loaded) {
+            gameView.resetBoard();
+            gameView.displayMessage("Ships loaded from ships.txt");
+        } else {
+            gameView.displayMessage("Failed to load ships.txt. Starting random game.");
+            gameModel = new GameModel();
+            gameView.resetBoard();
+        }
+    }
 }
+
