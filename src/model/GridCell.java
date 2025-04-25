@@ -1,5 +1,4 @@
 package model;
-
 public class GridCell {
     private Ship ship;
     private boolean isGuessed;

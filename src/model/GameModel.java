@@ -117,15 +117,20 @@ public class GameModel extends Observable {
                 Ship ship = board[row][col].getShip();
                 if (ship.isSunk() && !sunkShips.contains(ship)) {
                     sunkShips.add(ship);
-                    setChanged();
-                    notifyObservers("You sunk ship " + ship.getName() + "!");
+                    if (isGameOver()) {
+                        setChanged();
+                        notifyObservers("GAME_OVER:" + totalGuesses);
+                    } else {
+                        setChanged();
+                        notifyObservers("You sunk ship " + ship.getName() + "!");
+                    }
                 } else {
                     setChanged();
-                    notifyObservers();
+                    notifyObservers("Hit!");
                 }
             } else {
                 setChanged();
-                notifyObservers();
+                notifyObservers("Miss!");
             }
 
             return hit;

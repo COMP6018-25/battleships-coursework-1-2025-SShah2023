@@ -10,13 +10,9 @@ public class Ship {
         this.name = name;
         this.hits = new boolean[length];
     }
-
-
     public Ship(int length) {
         this(length, "Unnamed Ship");
     }
-
-
     public boolean hit() {
         for (int i = 0; i < hits.length; i++) {
             if (!hits[i]) {
@@ -27,8 +23,6 @@ public class Ship {
         assert isSunk() : "Trying to hit an already sunk ship!";
         return false;
     }
-
-
     public boolean isSunk() {
         for (boolean hit : hits) {
             if (!hit) return false;
@@ -39,7 +33,6 @@ public class Ship {
     public int getLength() {
         return length;
     }
-
     public String getName() {
         return name;
     }

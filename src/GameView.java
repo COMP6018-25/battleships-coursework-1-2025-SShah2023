@@ -13,7 +13,6 @@ public class GameView extends JFrame implements Observer {
 
     public GameView() {
         buttons = new JButton[10][10];
-
         setTitle("Battleship Game");
         setSize(600, 700);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -38,23 +37,27 @@ public class GameView extends JFrame implements Observer {
                 boardPanel.add(buttons[row][col]);
             }
         }
-
-
+        JPanel topPanel = new JPanel(new GridLayout(2, 1));
         statusLabel = new JLabel("Select a cell to attack!", SwingConstants.CENTER);
-        add(statusLabel, BorderLayout.NORTH);
+        statusLabel.setFont(new Font("Arial", Font.PLAIN, 16));
+        topPanel.add(statusLabel);
+
         eventLabel = new JLabel(" ");
         eventLabel.setHorizontalAlignment(SwingConstants.CENTER);
         eventLabel.setFont(new Font("Arial", Font.BOLD, 14));
         eventLabel.setForeground(Color.MAGENTA);
-        add(eventLabel, BorderLayout.NORTH);
+        topPanel.add(eventLabel);
+
+        add(topPanel, BorderLayout.NORTH);
         add(boardPanel, BorderLayout.CENTER);
 
+        JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
         JButton resetButton = new JButton("Reset Game");
         resetButton.addActionListener(e -> controller.resetGame());
-        add(resetButton, BorderLayout.SOUTH);
+
         JButton loadButton = new JButton("Load Ships");
         loadButton.addActionListener(e -> controller.loadShipsFromFile());
-        JPanel bottomPanel = new JPanel(new FlowLayout());
+
         bottomPanel.add(resetButton);
         bottomPanel.add(loadButton);
         add(bottomPanel, BorderLayout.SOUTH);
@@ -76,12 +79,12 @@ public class GameView extends JFrame implements Observer {
     }
 
     public void displayGameOver(int guesses) {
-        statusLabel.setText("Game Over! You won!"+ guesses +"guesses");
+        displayMessage("Game Over! You won in " + guesses + " guesses!");
     }
+
     public void showSunkShip(String shipName) {
         eventLabel.setText("You sunk the " + shipName + "!");
     }
-
 
     public void resetBoard() {
         for (int i = 0; i < 10; i++) {
@@ -90,24 +93,19 @@ public class GameView extends JFrame implements Observer {
                 buttons[i][j].setEnabled(true);
             }
         }
+        eventLabel.setText(" ");
+        statusLabel.setText("Select a cell to attack!");
     }
 
     public void disableCell(int row, int col) {
         buttons[row][col].setEnabled(false);
     }
 
-    @Override
-    public void update(Observable o, Object arg) {
-        if (arg instanceof String) {
-            displayMessage((String) arg);
-        }
-    }
-
     public void refreshBoard() {
         for (int row = 0; row < 10; row++) {
             for (int col = 0; col < 10; col++) {
                 GridCell cell = controller.getGameModel().getBoard()[row][col];
-                JButton button = gridButtons[row][col];
+                JButton button = buttons[row][col];
                 if (cell.isGuessed()) {
                     if (cell.hasShip()) {
                         button.setBackground(Color.RED);
@@ -115,9 +113,30 @@ public class GameView extends JFrame implements Observer {
                         button.setBackground(Color.BLUE);
                     }
                 } else {
-                    button.setBackground(Color.LIGHT_GRAY);
+                    button.setBackground(null);
                 }
             }
         }
     }
+
+    @Override
+    public void update(Observable o, Object arg) {
+        if (arg instanceof String message) {
+            System.out.println("Observer message: " + message);
+            if (message.startsWith("Game Over! All ships sunk in")) {
+                try {
+                    String[] parts = message.split(" ");
+                    int guesses = Integer.parseInt(parts[6]);
+                    displayGameOver(guesses);
+                } catch (Exception e) {
+                    displayMessage(message);
+                }
+            } else if (message.startsWith("You sunk ship")) {
+                showSunkShip(message.substring("You sunk ship ".length()));
+            } else {
+                displayMessage(message);
+            }
+            refreshBoard();
+        }
     }
+}

@@ -1,6 +1,4 @@
 import model.GameModel;
-import javax.swing.JFileChooser;
-import java.io.File;
 
 public class GameController {
     private GameModel gameModel;
@@ -10,6 +8,7 @@ public class GameController {
         this.gameModel = gameModel;
         this.gameView = gameView;
     }
+
 
     public void handleGuess(int row, int col) {
         assert row >= 0 && row < 10 && col >= 0 && col < 10 : "Guess out bounds";
