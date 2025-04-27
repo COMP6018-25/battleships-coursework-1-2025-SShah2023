@@ -1,3 +1,4 @@
+package controller;
 import model.GameModel;
 import view.GameView;
 
@@ -9,7 +10,6 @@ public class GameController {
         this.gameModel = gameModel;
         this.gameView = gameView;
     }
-
 
     public void handleGuess(int row, int col) {
         assert row >= 0 && row < 10 && col >= 0 && col < 10 : "Guess out bounds";

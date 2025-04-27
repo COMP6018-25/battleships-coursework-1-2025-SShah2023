@@ -1,8 +1,10 @@
+package view;
+import controller.GameController;
+import model.GridCell;
 import javax.swing.*;
 import java.awt.*;
 import java.util.Observer;
 import java.util.Observable;
-import model.GridCell;
 
 public class GameView extends JFrame implements Observer {
     private JButton[][] buttons;

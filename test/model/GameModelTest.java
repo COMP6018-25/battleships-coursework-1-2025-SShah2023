@@ -20,29 +20,29 @@ class GameModelTest {
 
     @Test
     void testPlaceShipSuccessfully() {
-        Ship ship = new Ship(3, "Destroyer");
+        Ship ship = new Ship(3, "3");
         boolean placed = game.placeShip(ship, 0, 0, true);
         assertTrue(placed, "Ship should be placed successfully on empty board.");
     }
 
     @Test
     void testPlaceShipOutOfBoundsFails() {
-        Ship ship = new Ship(5, "Carrier");
+        Ship ship = new Ship(5, "5");
         boolean placed = game.placeShip(ship, 9, 9, true); // Would overflow horizontally
         assertFalse(placed, "Placing ship out of bounds should fail.");
     }
 
     @Test
     void testPlaceShipOverlappingFails() {
-        Ship ship1 = new Ship(3, "Ship1");
-        Ship ship2 = new Ship(3, "Ship2");
+        Ship ship1 = new Ship(3, "1");
+        Ship ship2 = new Ship(3, "2");
         assertTrue(game.placeShip(ship1, 0, 0, true));
         assertFalse(game.placeShip(ship2, 0, 1, true), "Overlapping ships should not be placed.");
     }
 
     @Test
     void testMakeGuessHit() {
-        Ship ship = new Ship(2, "Patrol");
+        Ship ship = new Ship(2, "2");
         game.placeShip(ship, 1, 1, true);
         assertTrue(game.makeGuess(1, 1), "Guess on ship should be a hit.");
     }
