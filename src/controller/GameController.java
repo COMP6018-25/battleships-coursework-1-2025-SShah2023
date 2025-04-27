@@ -1,4 +1,5 @@
 import model.GameModel;
+import view.GameView;
 
 public class GameController {
     private GameModel gameModel;
