@@ -1,31 +1,26 @@
-import model.Ship;
-import model.GameModel;
+import controller.BattleShipCLI;
+import view.BattleShipGUI;
+
+import java.util.Scanner;
+
 public class Main {
     public static void main(String[] args) {
-        // Test Ship Class
-        Ship ship = new Ship(3);
-        System.out.println("Ship created with length: " + ship.getLength());
+        System.out.println("Welcome to Battleship!");
+        System.out.println("Select Mode:");
+        System.out.println("1. Play CLI version");
+        System.out.println("2. Play GUI version");
 
-        // Test GameModel Class
-        GameModel game = new GameModel();
-        System.out.println("GameModel initialized.");
+        Scanner scanner = new Scanner(System.in);
+        String choice = scanner.nextLine().trim();
 
-        // Test ship placement
-        System.out.println("Placing a ship at (2,3)...");
-        boolean placed = game.placeShip(new Ship(3), 2, 3, true);
-        System.out.println(placed ? "Ship placed successfully!" : "Failed to place ship.");
-
-        // Test making a guess
-        System.out.println("Making a guess at (2,3)...");
-        boolean hit = game.makeGuess(2, 3);
-        System.out.println(hit ? "Hit!" : "Miss!");
-
-        System.out.println("Making a guess at (5,5)...");
-        hit = game.makeGuess(5, 5);
-        System.out.println(hit ? "Hit!" : "Miss!");
-
-        assert ship.getLength() == 3 : "Ship length should be 3";
-        assert game.getBoard() != null : "Board should not be null";
-
+        if (choice.equals("1")) {
+            BattleShipCLI cli = new BattleShipCLI();
+            cli.startGame();
+        } else if (choice.equals("2")) {
+            // ✅ Corrected: call the main method of BattleShipGUI
+            BattleShipGUI.main(new String[]{});
+        } else {
+            System.out.println("Invalid choice. Exiting...");
+        }
     }
 }
