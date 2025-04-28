@@ -105,8 +105,4 @@ public class BattleShipCLI {
         }
     }
 
-    public static void main(String[] args) {
-        BattleShipCLI game = new BattleShipCLI();
-        game.startGame();
-    }
 }
