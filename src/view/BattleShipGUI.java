@@ -2,10 +2,11 @@ package view;
 
 import controller.GameController;
 import model.GameModel;
+
 import javax.swing.*;
 import java.awt.*;
 
-public class GUIMain {
+public class BattleShipGUI {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             JFrame startFrame = new JFrame("Battleship");
@@ -24,7 +25,7 @@ public class GUIMain {
 
             randomBtn.addActionListener(e -> {
                 startFrame.dispose();
-                launchGame(new GameModel()); // random placement
+                launchGame(new GameModel()); // Random placement
             });
 
             loadBtn.addActionListener(e -> {
