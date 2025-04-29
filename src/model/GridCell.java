@@ -25,8 +25,9 @@ public class GridCell {
     }
 
     public Ship getShip() {
-        return ship != null ? ship : new Ship(0);
+        return ship;
     }
+
 
     @Override
     public String toString() {
