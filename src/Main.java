@@ -17,8 +17,7 @@ public class Main {
             BattleShipCLI cli = new BattleShipCLI();
             cli.startGame();
         } else if (choice.equals("2")) {
-            // ✅ Corrected: call the main method of BattleShipGUI
-            BattleShipGUI.main(new String[]{});
+            BattleShipGUI.showStartupScreen();
         } else {
             System.out.println("Invalid choice. Exiting...");
         }

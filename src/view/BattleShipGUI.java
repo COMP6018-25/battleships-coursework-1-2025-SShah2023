@@ -2,12 +2,11 @@ package view;
 
 import controller.GameController;
 import model.GameModel;
-
 import javax.swing.*;
 import java.awt.*;
 
 public class BattleShipGUI {
-    public static void main(String[] args) {
+    public static void showStartupScreen() {
         SwingUtilities.invokeLater(() -> {
             JFrame startFrame = new JFrame("Battleship");
             startFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
