@@ -7,12 +7,17 @@ public class GameController {
     private final GameView gameView;
 
     public GameController(GameModel gameModel, GameView gameView) {
+        // precondition- neither model nor view should be null
+        assert gameModel != null : "GameModel must not be null";
+        assert gameView != null : "GameView must not be null";
         this.gameModel = gameModel;
         this.gameView = gameView;
     }
 
     public void handleGuess(int row, int col) {
-        assert row >= 0 && row < 10 && col >= 0 && col < 10 : "Guess out bounds";
+        // precondition- guess must be within board bounds
+        assert row >= 0 && row < 10 : "Row guess out of bounds";
+        assert col >= 0 && col < 10 : "Column guess out of bounds";
         if (!gameModel.getBoard()[row][col].isGuessed()) {
             boolean hit = gameModel.makeGuess(row, col);
             gameView.updateBoard(row, col, hit);
@@ -47,6 +52,8 @@ public class GameController {
 
     public void resetGame() {
         gameModel = new GameModel();
+        // post condition- model and board should be ready after reset
+        assert gameModel.getBoard() != null : "Game board should be initialized after reset";
         assert gameModel.getBoard() != null : "Game board should be initialized after reset";
         gameView.displayMessage("Game Reset! Select a cell to attack.");
         gameView.resetBoard(); // Reset the UI board
@@ -60,6 +67,8 @@ public class GameController {
         } else {
             gameView.displayMessage("Failed to load ships.txt. Starting random game.");
             gameModel = new GameModel();
+            // Post condition- model should recover if file fails
+            assert gameModel != null : "Fallback GameModel creation failed";
             gameView.resetBoard();
         }
     }
