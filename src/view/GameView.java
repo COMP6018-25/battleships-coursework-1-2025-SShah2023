@@ -55,10 +55,16 @@ public class GameView extends JFrame implements Observer {
 
         JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
         JButton resetButton = new JButton("Reset Game");
-        resetButton.addActionListener(e -> controller.resetGame());
-
+        resetButton.addActionListener(e -> {
+            this.dispose();
+            BattleShipGUI.showStartupScreen();
+        });
         JButton loadButton = new JButton("Load Ships");
-        loadButton.addActionListener(e -> controller.loadShipsFromFile());
+        loadButton.addActionListener(e -> {
+            this.dispose();
+            BattleShipGUI.showStartupScreen();
+        });
+
 
         bottomPanel.add(resetButton);
         bottomPanel.add(loadButton);
@@ -68,7 +74,9 @@ public class GameView extends JFrame implements Observer {
 
     public void setController(GameController controller) {
         this.controller = controller;
+        controller.getGameModel().addObserver(this);
     }
+
 
     public void updateBoard(int row, int col, boolean hit) {
         assert row >= 0 && row < 10 && col >= 0 && col < 10 : "updateBoard: out of bounds";

@@ -49,28 +49,6 @@ public class GameController {
             }
         }
     }
-
-    public void resetGame() {
-        gameModel = new GameModel();
-        // post condition- model and board should be ready after reset
-        assert gameModel.getBoard() != null : "Game board should be initialized after reset";
-        assert gameModel.getBoard() != null : "Game board should be initialized after reset";
-        gameView.displayMessage("Game Reset! Select a cell to attack.");
-        gameView.resetBoard(); // Reset the UI board
-    }
-
-    public void loadShipsFromFile() {
-        boolean loaded = gameModel.loadShipsFromFile("ships.txt");
-        if (loaded) {
-            gameView.resetBoard();
-            gameView.displayMessage("Ships loaded from ships.txt");
-        } else {
-            gameView.displayMessage("Failed to load ships.txt. Starting random game.");
-            gameModel = new GameModel();
-            // Post condition- model should recover if file fails
-            assert gameModel != null : "Fallback GameModel creation failed";
-            gameView.resetBoard();
-        }
-    }
 }
+
 
