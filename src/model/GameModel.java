@@ -22,6 +22,8 @@ public class GameModel extends Observable {
         }
         initializeShips();
         placeShipsRandomly();
+        // Precondition- 5 ships should be initialised
+        assert ships.size() == 5 : "Expected 5 ships to be initialized";
     }
 
     private void initializeShips() {
@@ -41,13 +43,19 @@ public class GameModel extends Observable {
                 int row = (int) (Math.random() * BOARD_SIZE);
                 int col = (int) (Math.random() * BOARD_SIZE);
                 boolean horizontal = Math.random() < 0.5;
+                // precondition- check for valid coordinates
+                assert row >= 0 && col >= 0 && row < BOARD_SIZE && col < BOARD_SIZE : "Invalid random coordinates";
                 placed = placeShip(ship, row, col, horizontal);
                 attempts++;
             }
+            //post condition- check ships are placed
+            assert placed : "Failed to place ship after 100 attempts";
         }
     }
 
     public boolean placeShip(Ship ship, int row, int col, boolean horizontal) {
+        //precondition- ship not null
+        assert ship != null : "Ship must not be null";
         if (row < 0 || col < 0 || row >= BOARD_SIZE || col >= BOARD_SIZE) return false;
 
         for (int i = 0; i < ship.getLength(); i++) {
@@ -92,6 +100,8 @@ public class GameModel extends Observable {
                 int row = Integer.parseInt(parts[2]);
                 int col = Integer.parseInt(parts[3]);
                 boolean horizontal = parts[4].equalsIgnoreCase("H");
+                // Precondition: valid file ship data
+                assert length > 0 && row >= 0 && col >= 0 : "Invalid ship data from file";
 
                 Ship ship = new Ship(length, name);
                 boolean placed = placeShip(ship, row, col, horizontal);
@@ -101,6 +111,9 @@ public class GameModel extends Observable {
                 }
                 ships.add(ship);
             }
+            // post condition- at least one ship loaded
+            assert ships.size() > 0 : "No ships loaded from file";
+
             return true;
         } catch (IOException | NumberFormatException e) {
             System.err.println("Error loading file: " + e.getMessage());
@@ -109,12 +122,17 @@ public class GameModel extends Observable {
     }
 
     public boolean makeGuess(int row, int col) {
+        // Precondition- coordinates in bounds
+        assert row >= 0 && row < BOARD_SIZE : "Row out of bounds";
+        assert col >= 0 && col < BOARD_SIZE : "Column out of bounds";
         if (!board[row][col].isGuessed()) {
             boolean hit = board[row][col].attemptHit();
             totalGuesses++;
 
             if (hit) {
                 Ship ship = board[row][col].getShip();
+                // Precondition- hit ship should not be null
+                assert ship != null : "Hit was true but ship is null";
                 if (ship.isSunk() && !sunkShips.contains(ship)) {
                     sunkShips.add(ship);
                     if (isGameOver()) {
