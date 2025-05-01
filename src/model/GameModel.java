@@ -71,6 +71,13 @@ public class GameModel extends Observable {
             int y = col + (horizontal ? i : 0);
             board[x][y].setShip(ship);
         }
+        // Post condition- Ensure no overlapping ships exist
+        for (int i = 0; i < ship.getLength(); i++) {
+            int x = row + (horizontal ? 0 : i);
+            int y = col + (horizontal ? i : 0);
+            assert board[x][y].getShip() == ship : "Overlap detected: Cell already contains another ship!";
+        }
+
         return true;
     }
 

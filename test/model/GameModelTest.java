@@ -24,7 +24,8 @@ class GameModelTest {
         boolean placed = game.placeShip(ship, 0, 0, true);
         assertTrue(placed, "Ship should be placed successfully on empty board.");
     }
-
+    //Scenario: Attempting to place a ship that would exceed board boundaries.
+    //This tests spatial validation logic for horizontal overflow.
     @Test
     void testPlaceShipOutOfBoundsFails() {
         Ship ship = new Ship(5, "5");
@@ -57,6 +58,9 @@ class GameModelTest {
         assertFalse(game.isGameOver(), "Game should not be over at the start.");
     }
 
+
+     //Scenario: The game should end when all ships are sunk.
+     //A single ship is placed and hit until sunk to trigger game over.
     @Test
     void testGameOverAfterSinkingAllShips() {
         GameModel smallGame = new GameModel();
@@ -72,4 +76,16 @@ class GameModelTest {
         boolean loaded = game.loadShipsFromFile("non_existent_file.txt");
         assertFalse(loaded, "Loading an invalid file should fail gracefully.");
     }
+    //Scenario (FR5)- Placing two ships in adjacent but non-overlapping positions is valid,
+    //but overlapping should be rejected.
+    @Test
+    void testAdjacentButNotOverlappingShips() {
+        Ship ship1 = new Ship(2, "A");
+        Ship ship2 = new Ship(2, "B");
+
+        assertTrue(game.placeShip(ship1, 0, 0, true), "First ship should place at (0,0)");
+        assertFalse(game.placeShip(ship2, 0, 1, false), "Second ship should overlap and be rejected");
+        assertTrue(game.placeShip(ship2, 1, 0, true), "Adjacent placement should be allowed");
+    }
+
 }
