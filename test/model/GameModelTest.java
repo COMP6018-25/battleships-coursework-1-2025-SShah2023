@@ -1,3 +1,6 @@
+ //Unit tests for GameModel.
+ //These tests cover key functionality including ship placement, gameplay mechanics and end game logic.
+ //Comments explain the scenario and expected outcome.
 package model;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,7 +28,7 @@ class GameModelTest {
         assertTrue(placed, "Ship should be placed successfully on empty board.");
     }
     //Scenario: Attempting to place a ship that would exceed board boundaries.
-    //This tests spatial validation logic for horizontal overflow.
+    // This tests validation logic for horizontal overflow.
     @Test
     void testPlaceShipOutOfBoundsFails() {
         Ship ship = new Ship(5, "5");
@@ -57,8 +60,9 @@ class GameModelTest {
         boolean loaded = game.loadShipsFromFile("non_existent_file.txt");
         assertFalse(loaded, "Loading an invalid file should fail gracefully.");
     }
-    //Scenario (FR5)- Placing two ships in adjacent but non-overlapping positions is valid,
-    //but overlapping should be rejected.
+    // Scenario (FR5): Placing two ships in adjacent but non-overlapping positions is valid.
+    // Overlapping should be rejected.
+    // This confirms ship placement logic respects adjacency without violating collision constraints.
     @Test
     void testAdjacentButNotOverlappingShips() {
         Ship ship1 = new Ship(2, "A");
