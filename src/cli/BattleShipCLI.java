@@ -1,6 +1,9 @@
-package controller;
+package cli;
 import model.GameModel;
 import java.util.Scanner;
+
+//Command-line interface (CLI) version of the Battleship game.
+//Directly interacts with the GameModel without using View or Controller
 
 public class BattleShipCLI {
     private GameModel game;
@@ -9,6 +12,7 @@ public class BattleShipCLI {
     public BattleShipCLI() {
         scanner = new Scanner(System.in);
     }
+    //Starts a new CLI game session
     public void startGame() {
         System.out.println("Welcome to Battleship!");
         System.out.println("Would you like to load ship configuration from a file? (Y/N): ");
@@ -22,7 +26,7 @@ public class BattleShipCLI {
         } else {
             game = new GameModel();
         }
-
+        assert game != null : "GameModel must be initialised";
         System.out.println("Enter your guesses in the format: A1,B2...");
 
         while (!game.isGameOver()) {
@@ -49,14 +53,13 @@ public class BattleShipCLI {
         System.out.println("Game Over! You sunk all the ships in " + game.getTotalGuesses() + " guesses!");
         scanner.close();
     }
-
-
+    //Load ships from a file named ships.txt
     private boolean loadShipsFromFile () {
             String path = "ships.txt";
             game = new GameModel();
             return game.loadShipsFromFile(path);
         }
-
+        //Prompts the user for valid coordinates in the format A1–J10
         private int[] getValidInput () {
             String input;
             int row = -1, col = -1;
@@ -90,10 +93,12 @@ public class BattleShipCLI {
 
                 break;
             }
-
+            assert row >= 0 && row < 10 : "Row input out of bounds";
+            assert col >= 0 && col < 10 : "Column input out of bounds";
             return new int[]{row, col};
         }
-
+        //Prints the current state of the board to the terminal.
+        //H = Hit, M = Miss, ~ = Unknown
         private void displayBoard () {
             System.out.println("Battleship Board");
             System.out.println("   1 2 3 4 5 6 7 8 9 10");
