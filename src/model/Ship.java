@@ -1,9 +1,13 @@
 package model;
+
+//Represents a single ship in the Battleship game.
+//Tracks its length, name, and which segments have been hit.
+
 public class Ship {
     private final int length;
     private final boolean[] hits;
     private final String name;
-
+    //Constructs a named ship with a given length.
     public Ship(int length, String name) {
         assert length > 0 : "Ship length must be positive"; // Precondition
         this.length = length;
@@ -11,9 +15,11 @@ public class Ship {
         this.hits = new boolean[length];
         assert hits.length == length : "Hit array must match ship length"; // Post condition
     }
+    //Constructs a default unnamed ship with the given length.
     public Ship(int length) {
         this(length, "Unnamed Ship");
     }
+    //Registers a hit on the next unhit segment of the ship.
     public boolean hit() {
         // a ship must have at least one un-hit segment before this is called
         int unhitCount = 0;
@@ -32,7 +38,7 @@ public class Ship {
 
         return false;
     }
-
+    //Checks if all segments of the ship have been hit.
     public boolean isSunk() {
         for (boolean hit : hits) {
             if (!hit) return false;
