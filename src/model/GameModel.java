@@ -6,6 +6,10 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 
+//Core model class for the Battleship game.
+//Manages the board state, ships, guesses, and game rules.
+//Notifies observers when game state changes (FR1, FR5, FR8).
+
 public class GameModel extends Observable {
     private static final int BOARD_SIZE = 10;
     private final GridCell[][] board = new GridCell[BOARD_SIZE][BOARD_SIZE];
@@ -13,7 +17,7 @@ public class GameModel extends Observable {
     private final List<Ship> sunkShips = new ArrayList<>();
 
     private int totalGuesses = 0;
-
+    //Constructor initializes the board and places 5 ships randomly.
     public GameModel() {
         for (int i = 0; i < BOARD_SIZE; i++) {
             for (int j = 0; j < BOARD_SIZE; j++) {
@@ -25,7 +29,7 @@ public class GameModel extends Observable {
         // Precondition- 5 ships should be initialised
         assert ships.size() == 5 : "Expected 5 ships to be initialized";
     }
-
+    //Adds standard ships to the ship list.
     private void initializeShips() {
         ships.clear();
         ships.add(new Ship(5, "5"));
@@ -34,7 +38,7 @@ public class GameModel extends Observable {
         ships.add(new Ship(2, "2"));
         ships.add(new Ship(2, "2"));
     }
-
+    //Randomly places ships on the board without overlaps.
     private void placeShipsRandomly() {
         for (Ship ship : ships) {
             boolean placed = false;
@@ -52,7 +56,8 @@ public class GameModel extends Observable {
             assert placed : "Failed to place ship after 100 attempts";
         }
     }
-
+    //Attempts to place a ship at a given position and orientation.
+    //Returns false if out-of-bounds or overlapping.
     public boolean placeShip(Ship ship, int row, int col, boolean horizontal) {
         //precondition- ship not null
         assert ship != null : "Ship must not be null";
@@ -80,7 +85,7 @@ public class GameModel extends Observable {
 
         return true;
     }
-
+    //Load ships from a configuration file.
     public boolean loadShipsFromFile(String filePath) {
         for (int i = 0; i < BOARD_SIZE; i++) {
             for (int j = 0; j < BOARD_SIZE; j++) {
@@ -127,7 +132,7 @@ public class GameModel extends Observable {
             return false;
         }
     }
-
+    //Makes a guess on the board and updates state and observers.
     public boolean makeGuess(int row, int col) {
         // Precondition- coordinates in bounds
         assert row >= 0 && row < BOARD_SIZE : "Row out of bounds";
